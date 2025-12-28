@@ -21,7 +21,8 @@ const config = {
     extend: {
       colors: {
         black: {
-          1: '#1b1b1b', 
+          DEFAULT: '#000000',
+          1: '#1b1b1b',
           2: '#333333',
         },
         border: "hsl(var(--border))",
