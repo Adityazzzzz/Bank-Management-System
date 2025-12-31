@@ -34,7 +34,10 @@ export const createFundingSource = async (
         plaidToken: options.plaidToken,
       })
       .then((res) => res.headers.get("location"));
-  } catch (err) {
+  } catch (err: any) {
+    if (err?.body?.code === "DuplicateResource" && err?.body?._links?.about?.href) {
+      return err.body._links.about.href;
+    }
     console.error("Creating a Funding Source Failed: ", err);
   }
 };

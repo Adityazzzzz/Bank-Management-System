@@ -44,7 +44,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
       name: "",
       email: "",
       amount: "",
-      senderBank: "",
+      senderBank: accounts[0]?.appwriteItemId || "",
       shareableId: "",
     },
   });

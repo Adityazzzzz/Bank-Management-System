@@ -45,7 +45,7 @@ export const getAccounts = async ({ userId }: getAccountsProps) => {
           type: accountData.type as string,
           subtype: accountData.subtype! as string,
           appwriteItemId: bank.$id,
-          sharaebleId: bank.shareableId,
+          shareableId: bank.shareableId,
         };
         return account;
       })
@@ -79,7 +79,7 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
       bankId: bank.$id,
     });
 
-    const transferTransactions = transferTransactionsData.documents.map(
+    const transferTransactions = transferTransactionsData?.documents?.map(
       (transferData: Transaction) => ({
         id: transferData.$id,
         name: transferData.name!,
@@ -89,7 +89,7 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
         category: transferData.category,
         type: transferData.senderBankId === bank.$id ? "debit" : "credit",
       })
-    );
+    ) || [];
 
     // get institution info from plaid
     const institution = await getInstitution({
@@ -111,6 +111,7 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
       type: accountData.type as string,
       subtype: accountData.subtype! as string,
       appwriteItemId: bank.$id,
+      shareableId: bank.shareableId,
     };
 
     // sort transactions by date such that the most recent transaction is first
@@ -151,6 +152,7 @@ export const getTransactions = async ({
 }: getTransactionsProps) => {
   let hasMore = true;
   let transactions: any = [];
+  if (!accessToken) return [];
 
   try {
     // Iterate through each page of new transaction updates for item
@@ -178,7 +180,12 @@ export const getTransactions = async ({
     }
 
     return parseStringify(transactions);
-  } catch (error) {
-    console.error("An error occurred while getting the accounts:", error);
+  } catch (error: any) {
+    if (error?.response?.status === 400) {
+      console.warn("Transactions could not be retrieved (likely due to missing permissions on linked account). Returning empty list.");
+      return [];
+    }
+    console.error("An error occurred while getting the transactions:", error);
+    return [];
   }
 };
