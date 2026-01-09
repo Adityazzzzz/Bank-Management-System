@@ -21,23 +21,31 @@ export const BankDropdown = ({
 }: BankDropdownProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [selected, setSeclected] = useState(accounts[0]);
+  
+  // FIX 1: Safe initialization. If accounts is empty, default to null.
+  const [selected, setSelected] = useState(accounts[0] || null);
 
   const handleBankChange = (id: string) => {
-    const account = accounts.find((account) => account.appwriteItemId === id)!;
+    // FIX 2: Safety check to prevent crash if account isn't found
+    const account = accounts.find((account) => account.appwriteItemId === id);
 
-    setSeclected(account);
-    const newUrl = formUrlQuery({
-      params: searchParams.toString(),
-      key: "id",
-      value: id,
-    });
-    router.push(newUrl, { scroll: false });
-
-    if (setValue) {
-      setValue("senderBank", id);
+    if (account) {
+        setSelected(account);
+        const newUrl = formUrlQuery({
+          params: searchParams.toString(),
+          key: "id",
+          value: id,
+        });
+        router.push(newUrl, { scroll: false });
+    
+        if (setValue) {
+          setValue("senderBank", id);
+        }
     }
   };
+
+  // FIX 3: Return nothing (or a placeholder) if no accounts exist to prevent rendering errors
+  if (!selected) return null;
 
   return (
     <Select
