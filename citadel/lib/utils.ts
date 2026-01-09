@@ -211,3 +211,14 @@ export const authFormSchema = (type: string) => {
     password: z.string().min(8),
   })
 }
+
+export const generateCardDetails = () => {
+  const generateRandom = (length: number) => 
+    Math.floor(Math.random() * Math.pow(10, length)).toString().padStart(length, '0');
+
+  return {
+    cardNumber: `4${generateRandom(15)}`, // Visa starts with 4
+    cvv: generateRandom(3),
+    expiryDate: `${Math.floor(Math.random() * 12 + 1).toString().padStart(2, '0')}/${(new Date().getFullYear() + 5).toString().slice(-2)}`
+  };
+};
