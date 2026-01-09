@@ -21,44 +21,58 @@ export const getAccounts = async ({ userId }: getAccountsProps) => {
     // get banks from db
     const banks = await getBanks({ userId });
 
+    if (!banks) return null;
+
     const accounts = await Promise.all(
-      banks?.map(async (bank: Bank) => {
-        // get each account info from plaid
-        const accountsResponse = await plaidClient.accountsGet({
-          access_token: bank.accessToken,
-        });
-        const accountData = accountsResponse.data.accounts[0];
+      banks.map(async (bank: Bank) => {
+        try {
+            // get each account info from plaid
+            const accountsResponse = await plaidClient.accountsGet({
+            access_token: bank.accessToken,
+            });
+            const accountData = accountsResponse.data.accounts[0];
 
-        // get institution info from plaid
-        const institution = await getInstitution({
-          institutionId: accountsResponse.data.item.institution_id!,
-        });
+            // get institution info from plaid
+            const institution = await getInstitution({
+            institutionId: accountsResponse.data.item.institution_id!,
+            });
 
-        const account = {
-          id: accountData.account_id,
-          availableBalance: accountData.balances.available!,
-          currentBalance: accountData.balances.current!,
-          institutionId: institution.institution_id,
-          name: accountData.name,
-          officialName: accountData.official_name,
-          mask: accountData.mask!,
-          type: accountData.type as string,
-          subtype: accountData.subtype! as string,
-          appwriteItemId: bank.$id,
-          shareableId: bank.shareableId,
-        };
-        return account;
+            const account = {
+            id: accountData.account_id,
+            availableBalance: accountData.balances.available!,
+            currentBalance: accountData.balances.current!,
+            institutionId: institution.institution_id,
+            name: accountData.name,
+            officialName: accountData.official_name,
+            mask: accountData.mask!,
+            type: accountData.type as string,
+            subtype: accountData.subtype! as string,
+            appwriteItemId: bank.$id,
+            shareableId: bank.shareableId,
+            };
+            return account;
+        } catch (error) {
+            // FIX: If one bank fails, log it and return null, don't crash the whole app
+            console.warn(`Failed to fetch account for bank ${bank.$id}:`, error);
+            return null;
+        }
       })
     );
 
-    const totalBanks = accounts.length;
-    const totalCurrentBalance = accounts.reduce((total, account) => {
+    // FIX: Filter out the nulls (failed banks)
+    const validAccounts = accounts.filter((account) => account !== null);
+
+    if (validAccounts.length === 0) return null;
+
+    const totalBanks = validAccounts.length;
+    const totalCurrentBalance = validAccounts.reduce((total, account) => {
       return total + account.currentBalance;
     }, 0);
 
-    return parseStringify({ data: accounts, totalBanks, totalCurrentBalance });
+    return parseStringify({ data: validAccounts, totalBanks, totalCurrentBalance });
   } catch (error) {
     console.error("An error occurred while getting the accounts:", error);
+    return null; // Ensure we return null so frontend checks work
   }
 };
 
@@ -67,6 +81,8 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
   try {
     // get bank from db
     const bank = await getBank({ documentId: appwriteItemId });
+
+    if (!bank) return null;
 
     // get account info from plaid
     const accountsResponse = await plaidClient.accountsGet({
@@ -125,6 +141,7 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
     });
   } catch (error) {
     console.error("An error occurred while getting the account:", error);
+    return null;
   }
 };
 
@@ -152,6 +169,7 @@ export const getTransactions = async ({
 }: getTransactionsProps) => {
   let hasMore = true;
   let transactions: any = [];
+  
   if (!accessToken) return [];
 
   try {
@@ -163,7 +181,7 @@ export const getTransactions = async ({
 
       const data = response.data;
 
-      transactions = response.data.added.map((transaction) => ({
+      const newTransactions = response.data.added.map((transaction) => ({
         id: transaction.transaction_id,
         name: transaction.name,
         paymentChannel: transaction.payment_channel,
@@ -176,14 +194,17 @@ export const getTransactions = async ({
         image: transaction.logo_url,
       }));
 
+      transactions.push(...newTransactions);
+
       hasMore = data.has_more;
     }
 
     return parseStringify(transactions);
   } catch (error: any) {
-    if (error?.response?.status === 400) {
-      console.warn("Transactions could not be retrieved (likely due to missing permissions on linked account). Returning empty list.");
-      return [];
+    // FIX: Handle Plaid Errors Gracefully
+    if (error?.response?.status === 400 || error?.response?.data?.error_code === 'ITEM_LOGIN_REQUIRED') {
+        console.warn("Transactions could not be retrieved (likely due to missing permissions or expired token). Returning empty list.");
+        return [];
     }
     console.error("An error occurred while getting the transactions:", error);
     return [];

@@ -45,17 +45,26 @@ export const getTransactionsByBankId = async ({ bankId }: getTransactionsByBankI
       TRANSACTION_COLLECTION_ID!,
       [Query.equal('receiverBankId', bankId)],
     );
+    const allTransactions = [
+        ...senderTransactions.documents, 
+        ...receiverTransactions.documents
+    ];
+
+    const uniqueTransactionsMap = new Map();
+    allTransactions.forEach((tx) => {
+        uniqueTransactionsMap.set(tx.$id, tx);
+    });
+
+    const uniqueDocuments = Array.from(uniqueTransactionsMap.values());
 
     const transactions = {
-      total: senderTransactions.total + receiverTransactions.total,
-      documents: [
-        ...senderTransactions.documents,
-        ...receiverTransactions.documents,
-      ]
+      total: uniqueDocuments.length,
+      documents: uniqueDocuments
     }
 
     return parseStringify(transactions);
-  } catch (error) {
+  } 
+  catch (error) {
     console.log(error);
     return {
       total: 0,
