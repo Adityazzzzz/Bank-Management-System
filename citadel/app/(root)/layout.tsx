@@ -3,6 +3,7 @@ import Sidebar from "@/components/Sidebar";
 import { getLoggedInUser } from "@/lib/actions/user.actions";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { Toaster } from "sonner"; // Ensure this is imported
 
 export default async function RootLayout({
   children,
@@ -26,6 +27,7 @@ export default async function RootLayout({
         </div>
         {children}
       </div>
+      <Toaster richColors position="top-center" />
     </main>
   );
 }
