@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Citadel 🏰
+Citadel is a modern, full-stack banking platform built with Next.js 16 and React 19. It connects to real banking APIs (Plaid) and payment processors (Dwolla) in a sandbox environment to simulate a complete financial ecosystem.
 
-## Getting Started
+This project demonstrates cutting-edge Next.js patterns including Server Actions, React Server Components (RSC), and robust third-party API integrations.
 
-First, run the development server:
+🚀 Tech Stack
+Framework: Next.js 16 (App Router)
+Language: TypeScript
+Styling: Tailwind CSS, Shadcn/UI
+Form Management: React Hook Form + Zod
+Database & Auth: Appwrite
+Bank Integration: Plaid API
+Payments Processor: Dwolla API
+State Management: React Server Components & URL State
 
-```bash
+✨ Key Features
+🔐 Bank-Grade Authentication: Secure login and signup using Appwrite (SSR).
+💳 Connect Real Banks: Link multiple bank accounts via Plaid Sandbox
+💸 Fund Transfers: Move money between accounts using Dwolla (ACH simulation).
+📊 Financial Dashboard: Real-time visualization of total balance, recent transactions, and spending categories using Chart.js.
+📜 Transaction History: Searchable, paginated transaction logs for each connected bank.
+📱 Responsive Design: Fully optimized for mobile and desktop devices.
+⚠️ Important Note on "Sandbox" Environment
+This application is a Proof of Concept (PoC) designed to demonstrate production-grade architecture.
+
+No Real Money: It uses the Plaid Sandbox and Dwolla Sandbox environments.
+US Banking Only: The APIs used (ACH, Routing Numbers) are specific to the US banking system.
+Simulated Data: Accounts and balances are simulated for testing purposes.
+
+🛠️ Getting Started
+Follow these steps to run the project locally.
+
+1. Clone the Repository
+Bash
+
+git clone https://github.com/your-username/citadel.git
+cd citadel
+2. Install Dependencies
+Bash
+
+npm install
+3. Environment Variables
+Create a .env file in the root directory and add the following keys:
+
+Code snippet
+
+# NEXT
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+
+# APPWRITE
+NEXT_PUBLIC_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
+NEXT_PUBLIC_APPWRITE_PROJECT=your_project_id
+NEXT_APPWRITE_KEY=your_secret_api_key
+APPWRITE_DATABASE_ID=your_database_id
+APPWRITE_USER_COLLECTION_ID=your_user_collection_id
+APPWRITE_BANK_COLLECTION_ID=your_bank_collection_id
+APPWRITE_TRANSACTION_COLLECTION_ID=your_transaction_collection_id
+
+# PLAID
+PLAID_CLIENT_ID=your_plaid_client_id
+PLAID_SECRET=your_plaid_secret
+PLAID_ENV=sandbox
+PLAID_PRODUCTS=auth,transactions,identity
+PLAID_COUNTRY_CODES=US
+
+# DWOLLA
+DWOLLA_KEY=your_dwolla_key
+DWOLLA_SECRET=your_dwolla_secret
+DWOLLA_BASE_URL=https://api-sandbox.dwolla.com
+DWOLLA_ENV=sandbox
+4. Run the Development Server
+Note: This project uses a custom dev script to enforce IPv4 to prevent connection timeouts on some networks.
+
+Bash
+
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Open http://localhost:3000 in your browser.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+🧪 Testing the App (Sandbox Credentials)
+Since this is a sandbox, use the following credentials to link a bank:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Username: user_good
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Password: pass_good
 
-## Learn More
+🤝 Contributing
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+📄 License
+This project is licensed under the MIT License.
