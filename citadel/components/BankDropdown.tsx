@@ -21,65 +21,51 @@ export const BankDropdown = ({
 }: BankDropdownProps) => {
   const searchParams = useSearchParams();
   const router = useRouter();
-  
-  // FIX 1: Safe initialization. If accounts is empty, default to null.
-  const [selected, setSelected] = useState(accounts[0] || null);
+  const id = searchParams.get("id");
 
-  const handleBankChange = (id: string) => {
-    // FIX 2: Safety check to prevent crash if account isn't found
-    const account = accounts.find((account) => account.appwriteItemId === id);
+  const [selected, setSelected] = useState(id || accounts[0]?.appwriteItemId);
 
-    if (account) {
-        setSelected(account);
-        const newUrl = formUrlQuery({
-          params: searchParams.toString(),
-          key: "id",
-          value: id,
-        });
-        router.push(newUrl, { scroll: false });
+  const handleBankChange = (newId: string) => {
+    setSelected(newId);
     
-        if (setValue) {
-          setValue("senderBank", id);
-        }
+    // FIX: If we are in a form (setValue exists), DO NOT change the URL.
+    // This prevents the page from refreshing and resetting the form.
+    if (setValue) {
+      setValue("senderBank", newId);
+    } else {
+      // Only change URL on Dashboard/History pages
+      const newUrl = formUrlQuery({
+        params: searchParams.toString(),
+        key: "id",
+        value: newId,
+      });
+      router.push(newUrl, { scroll: false });
     }
   };
 
-  // FIX 3: Return nothing (or a placeholder) if no accounts exist to prevent rendering errors
-  if (!selected) return null;
-
   return (
-    <Select
-      defaultValue={selected.appwriteItemId}
-      onValueChange={(value) => handleBankChange(value)}
-    >
-      <SelectTrigger
-        className={`flex w-full bg-white gap-3 md:w-[300px] ${otherStyles}`}
-      >
-        <Image
-          src="icons/credit-card.svg"
-          width={20}
-          height={20}
-          alt="account"
-        />
-        <p className="line-clamp-1 w-full text-left">{selected.name}</p>
+    <Select value={selected} onValueChange={(value) => handleBankChange(value)}>
+      <SelectTrigger className={`flex w-full bg-white gap-3 md:w-[300px] ${otherStyles}`}>
+        <Image src="icons/credit-card.svg" width={20} height={20} alt="account" />
+        <p className="line-clamp-1 w-full text-left">
+           {accounts.find((account) => account.appwriteItemId === selected)?.name || "Select Account"}
+        </p>
       </SelectTrigger>
-      <SelectContent
-        className={`w-full bg-white md:w-[300px] ${otherStyles}`}
-        align="end"
-      >
+      
+      <SelectContent className={`w-full bg-white md:w-[300px] z-50 ${otherStyles}`} align="end">
         <SelectGroup>
           <SelectLabel className="py-2 font-normal text-gray-500">
-            Select a bank to display
+            Select a bank to view
           </SelectLabel>
           {accounts.map((account: Account) => (
             <SelectItem
-              key={account.id}
+              key={account.id} 
               value={account.appwriteItemId}
               className="cursor-pointer border-t"
             >
               <div className="flex flex-col ">
                 <p className="text-16 font-medium">{account.name}</p>
-                <p className="text-14 font-medium text-blue-600">
+                <p className="text-12 font-medium text-blue-600">
                   {formatAmount(account.currentBalance)}
                 </p>
               </div>

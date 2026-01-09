@@ -9,7 +9,7 @@ import { authFormSchema } from '@/lib/utils'
 const formSchema = authFormSchema('sign-up')
 
 interface CustomInput {
-  control: Control<any>, 
+  control: Control<any>, // We fixed this type in the previous step
   name: FieldPath<z.infer<typeof formSchema>>,
   label: string,
   placeholder: string
@@ -32,6 +32,7 @@ const CustomInput = ({ control, name, label, placeholder }: CustomInput) => {
                 className="input-class"
                 type={name === 'password' ? 'password' : 'text'}
                 {...field}
+                value={field.value ?? ""} 
               />
             </FormControl>
             <FormMessage className="form-message mt-2" />

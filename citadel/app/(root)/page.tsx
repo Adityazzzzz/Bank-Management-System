@@ -13,6 +13,9 @@ const Home = async (props: SearchParamProps) => {
 
   const currentPage = Number(page as string) || 1;
   const loggedIn = await getLoggedInUser();
+  if (!loggedIn) {
+    return <div className="p-4">Please log in to view your dashboard.</div>; 
+  }
   const accounts = await getAccounts({
     userId: loggedIn.$id
   })

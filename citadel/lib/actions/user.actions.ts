@@ -24,10 +24,13 @@ export const getUserInfo = async ({ userId }: getUserInfoProps) => {
             USER_COLLECTION_ID!,
             [Query.equal('userId', [userId])]
         )
+        if(user.documents.length === 0) return null;
+        
         return parseStringify(user.documents[0]);
     }
     catch (error) {
         console.log(error)
+        return null; 
     }
 }
 
@@ -103,6 +106,7 @@ export async function getLoggedInUser() {
         const { account } = await createSessionClient();
         const result = await account.get();
         const user = await getUserInfo({ userId: result.$id })
+        if(!user) return null;
         return parseStringify(user);
     }
     catch (error) {
@@ -224,7 +228,8 @@ export const exchangePublicToken = async ({
         });
     } 
     catch (error) {
-        toast.error("An error occurred while creating exchanging token:");
+       console.error("An error occurred while exchanging token:", error);
+       throw error;
     }
 };
 
