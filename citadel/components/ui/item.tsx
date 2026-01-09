@@ -23,7 +23,7 @@ function ItemSeparator({
   return (
     <Separator
       data-slot="item-separator"
-      orientation="horizontal"
+      orientation="Citadeltal"
       className={cn("my-0", className)}
       {...props}
     />
