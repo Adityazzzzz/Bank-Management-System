@@ -1,4 +1,5 @@
 import MobileNav from "@/components/MobileNav";
+import RealTimeAlert from "@/components/RealTimeAlert";
 import Sidebar from "@/components/Sidebar";
 import { getLoggedInUser } from "@/lib/actions/user.actions";
 import Image from "next/image";
@@ -25,6 +26,7 @@ export default async function RootLayout({
             <MobileNav user={loggedIn} />
           </div>
         </div>
+        <RealTimeAlert userId={loggedIn.$id} />
         {children}
       </div>
       <Toaster richColors position="top-center" />
