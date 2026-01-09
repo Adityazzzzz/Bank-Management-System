@@ -3,12 +3,25 @@ import HeaderBox from '@/components/HeaderBox'
 import { getAccounts } from '@/lib/actions/bank.actions';
 import { getLoggedInUser } from '@/lib/actions/user.actions';
 import React from 'react'
+import ErrorToast from '@/components/ErrorToast';
 
 const MyBanks = async () => {
     const loggedIn = await getLoggedInUser();
     const accounts = await getAccounts({ 
         userId: loggedIn.$id 
     })
+
+    if(!accounts) {
+        return (
+            <section className='flex'>
+                <ErrorToast message="Could not load your banks." />
+                <div className="my-banks">
+                     <HeaderBox title="My Bank Accounts" subtext="Effortlessly manage your banking activites." />
+                     <p className="text-red-500 font-bold mt-4">System Error: Unable to fetch accounts.</p>
+                </div>
+            </section>
+        )
+    }
 
     return (
         <section className='flex'>
@@ -24,7 +37,7 @@ const MyBanks = async () => {
                     <div className="flex flex-wrap gap-6">
                         {accounts && accounts.data.map((a: Account) => (
                         <BankCard 
-                            key={accounts.id}
+                            key={a.id} 
                             account={a}
                             userName={loggedIn?.firstName}
                         />

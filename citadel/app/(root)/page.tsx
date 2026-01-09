@@ -1,3 +1,4 @@
+import ErrorToast from '@/components/ErrorToast';
 import HeaderBox from '@/components/HeaderBox'
 import RecentTransactions from '@/components/RecentTransactions';
 import RightSidebar from '@/components/RightSidebar';
@@ -16,7 +17,24 @@ const Home = async (props: SearchParamProps) => {
     userId: loggedIn.$id
   })
 
-  if (!accounts) return;
+  if (!accounts) {
+      return (
+          <section className="home">
+              <ErrorToast message="Dashboard data failed to load." />
+              <div className="home-content">
+                  <header className="home-header">
+                      <HeaderBox 
+                          type="greeting" title="Welcome" user={loggedIn?.firstName || 'Guest'}
+                          subtext="Access and manage your account and transactions efficiently."
+                      />
+                      <div className="text-red-500 font-bold">
+                          Error: Could not fetch account balance.
+                      </div>
+                  </header>
+              </div>
+          </section>
+      );
+  }
 
   const accountsData = accounts?.data;
   const appwriteItemId = (id as string) || accountsData[0]?.appwriteItemId;
