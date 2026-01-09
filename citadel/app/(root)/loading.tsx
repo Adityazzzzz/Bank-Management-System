@@ -1,17 +1,32 @@
 import React from 'react'
 
 const Loading = () => {
-    return (
-        <div className="flex w-full h-screen items-center justify-center bg-gray-50/50">
-            <div className="flex flex-col items-center gap-4">
-                {/* Spinning Loader Icon */}
-                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-                <p className="text-16 font-semibold text-blue-900 animate-pulse">
-                    Loading Citadel Banking...
-                </p>
-            </div>
+  return (
+    <div className="flex h-screen w-full items-center justify-center bg-white/40 backdrop-blur-sm">
+      <div className="flex flex-col items-center gap-6">
+        
+        {/* COOL SPINNER ANIMATION */}
+        <div className="relative flex items-center justify-center size-24">
+          
+          {/* Outer Ring - Spinning slowly */}
+          <div className="absolute size-full rounded-full border-[3px] border-blue-100"></div>
+          <div className="absolute size-full rounded-full border-[3px] border-t-blue-600 border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
+          
+          {/* Inner Ring - Spinning faster (offset visually) */}
+          <div className="absolute size-16 rounded-full border-[3px] border-blue-100"></div>
+          <div className="absolute size-16 rounded-full border-[3px] border-t-transparent border-r-blue-400 border-b-transparent border-l-transparent animate-spin"></div>
+          
+          {/* Center Dot - Pulsing */}
+          <div className="size-3 rounded-full bg-blue-600 animate-pulse shadow-[0_0_15px_rgba(37,99,235,0.5)]"></div>
+          
         </div>
-    )
+
+        <p className="text-14 font-medium text-blue-900 animate-pulse tracking-wider">
+          LOADING
+        </p>
+      </div>
+    </div>
+  )
 }
 
 export default Loading

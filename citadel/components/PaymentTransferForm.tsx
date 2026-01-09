@@ -84,7 +84,7 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
 
         if (newTransaction) {
           form.reset();
-          router.push("/");
+          router.push('/'); // Redirects to Dashboard
         }
       }
       toast.success("Payment transfer successful!")
