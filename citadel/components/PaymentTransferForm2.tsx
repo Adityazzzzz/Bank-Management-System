@@ -4,12 +4,22 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, Send, Check, Wallet, User, FileText, DollarSign } from "lucide-react";
+import { Loader2, Send, Check, Wallet, User, FileText, DollarSign, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogDescription, 
+  DialogFooter 
+} from "@/components/ui/dialog";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { createP2PTransfer } from "@/lib/actions/payment.actions";
+import { verifyOtpForTransaction } from "@/lib/actions/user.actions"; // Ensure this action exists
 import { toast } from "sonner";
 import { formatAmount } from "@/lib/utils";
 
@@ -20,9 +30,14 @@ const formSchema = z.object({
   note: z.string().optional(),
 });
 
-const P2PForm = ({ accounts, userId }: { accounts: any[], userId: string }) => {
+const P2PForm = ({ accounts, userId, user }: { accounts: any[], userId: string, user: any }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  
+  // OTP State
+  const [showOtpDialog, setShowOtpDialog] = useState(false);
+  const [otpCode, setOtpCode] = useState("");
+  const [formData, setFormData] = useState<z.infer<typeof formSchema> | null>(null);
   
   // Track selected bank for balance display
   const [selectedBankId, setSelectedBankId] = useState(accounts[0]?.$id || "");
@@ -43,7 +58,21 @@ const P2PForm = ({ accounts, userId }: { accounts: any[], userId: string }) => {
     form.setValue("senderBank", value);
   };
 
+  // 1. Intercept Submit
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    // If user has 2FA enabled, stop and show dialog
+    if (user.mfaEnabled) {
+        setFormData(data);
+        setShowOtpDialog(true);
+        return;
+    }
+
+    // Otherwise proceed directly
+    await processTransfer(data);
+  };
+
+  // 2. Execute Transfer (Reusable function)
+  const processTransfer = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
     try {
       await createP2PTransfer({
@@ -65,8 +94,25 @@ const P2PForm = ({ accounts, userId }: { accounts: any[], userId: string }) => {
       toast.error(error.message || "Transfer failed");
     } finally {
       setIsLoading(false);
+      setShowOtpDialog(false);
+      setFormData(null);
+      setOtpCode("");
     }
   };
+
+  // 3. Verify OTP and then Transfer
+  const onOtpVerify = async () => {
+      if(otpCode.length !== 6 || !formData) return;
+      
+      setIsLoading(true);
+      try {
+          await verifyOtpForTransaction(otpCode); // Verify code with Appwrite
+          await processTransfer(formData); // If valid, run the transfer
+      } catch (error) {
+          toast.error("Invalid 2FA Code. Please try again.");
+          setIsLoading(false);
+      }
+  }
 
   return (
     <div className="w-full max-w-2xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -186,7 +232,7 @@ const P2PForm = ({ accounts, userId }: { accounts: any[], userId: string }) => {
                             )}
                         />
 
-                        {/* SUBMIT */}
+                        {/* SUBMIT BUTTON */}
                         <div className="pt-4">
                             <Button 
                                 type="submit" 
@@ -205,6 +251,50 @@ const P2PForm = ({ accounts, userId }: { accounts: any[], userId: string }) => {
                 </Form>
             )}
        </div>
+
+       {/* OTP VERIFICATION DIALOG */}
+       <Dialog open={showOtpDialog} onOpenChange={setShowOtpDialog}>
+         <DialogContent className="sm:max-w-[400px] bg-white">
+           <DialogHeader>
+             <DialogTitle className="flex items-center gap-2 text-gray-900">
+                <ShieldCheck className="text-blue-600" size={24} /> Security Check
+             </DialogTitle>
+             <DialogDescription className="text-gray-500">
+                Please enter the 6-digit code from your authenticator app to confirm this transaction.
+             </DialogDescription>
+           </DialogHeader>
+
+           <div className="flex flex-col items-center py-6 space-y-4">
+                <div className="text-center bg-gray-50 p-3 rounded-lg w-full border border-gray-100">
+                    <p className="text-sm font-medium text-gray-900 mb-1">Sending <span className="font-bold">${formData?.amount}</span></p>
+                    <p className="text-xs text-gray-500">to {formData?.email}</p>
+                </div>
+
+                <InputOTP maxLength={6} value={otpCode} onChange={setOtpCode}>
+                    <InputOTPGroup>
+                        <InputOTPSlot index={0} className="border-gray-300" />
+                        <InputOTPSlot index={1} className="border-gray-300" />
+                        <InputOTPSlot index={2} className="border-gray-300" />
+                        <InputOTPSlot index={3} className="border-gray-300" />
+                        <InputOTPSlot index={4} className="border-gray-300" />
+                        <InputOTPSlot index={5} className="border-gray-300" />
+                    </InputOTPGroup>
+                </InputOTP>
+           </div>
+
+           <DialogFooter className="flex gap-2 sm:justify-between">
+             <Button variant="ghost" onClick={() => setShowOtpDialog(false)} className="w-full sm:w-auto">Cancel</Button>
+             <Button 
+                onClick={onOtpVerify} 
+                className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700"
+                disabled={otpCode.length < 6 || isLoading}
+             >
+                {isLoading ? <Loader2 className="animate-spin" /> : "Confirm Transfer"}
+             </Button>
+           </DialogFooter>
+         </DialogContent>
+       </Dialog>
+
     </div>
   );
 };

@@ -1,5 +1,5 @@
 'use server';
-
+import { AuthenticatorType, AuthenticationFactor } from "node-appwrite";
 import { ID, Query } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "../appwrite";
 import { cookies } from "next/headers";
@@ -278,5 +278,63 @@ export const getBankByAccountId = async ({ accountId }: getBankByAccountIdProps)
     }
     catch (error) {
         console.log(error)
+    }
+}
+
+// 1. Initiate 2FA (Get the Secret & QR URI)
+export const get2FASecret = async () => {
+  try {
+    const { account } = await createSessionClient();
+    
+    // Create a generic TOTP authenticator
+    // This returns the secret and a generic URI usually
+    const challenge = await account.createMfaAuthenticator(AuthenticatorType.Totp);
+
+    return parseStringify(challenge);
+  } catch (error) {
+    console.error("Error initiating 2FA:", error);
+    return null; // Handle error gracefully in UI
+  }
+}
+
+// 2. Activate 2FA (Verify the code user typed)
+export const activate2FA = async ({ code, secret }: { code: string, secret: string }) => {
+  try {
+    const { account } = await createSessionClient();
+
+    // Verify the code to finalize setup
+    const response = await account.updateMfaAuthenticator(
+        AuthenticatorType.Totp, 
+        code
+    );
+
+    // OPTIONAL: Update user prefs or DB to show "2FA: On" in UI immediately
+    // await account.updatePrefs({ mfaEnabled: true });
+
+    return parseStringify(response);
+  } catch (error) {
+    console.error("Error activating 2FA:", error);
+    throw new Error("Invalid Code");
+  }
+}
+
+// Verify the OTP code for sensitive actions (like transfers)
+export const verifyOtpForTransaction = async (code: string) => {
+    try {
+        const { account } = await createSessionClient();
+        
+        // 1. Create a "Challenge" to prove identity
+        const challenge = await account.createMfaChallenge(AuthenticationFactor.Totp);
+        
+        // 2. Solve the challenge with the user's code
+        const response = await account.updateMfaChallenge(
+            challenge.$id, 
+            code
+        );
+
+        return parseStringify(response);
+    } catch (error) {
+        console.error("OTP Verification Failed:", error);
+        throw new Error("Invalid 2FA Code");
     }
 }

@@ -25,6 +25,7 @@ const P2PTransferPage = async () => {
         <P2PForm
             accounts={accountsData} 
             userId={loggedIn.$id} 
+            user={loggedIn}
         />
       </div>
     </section>

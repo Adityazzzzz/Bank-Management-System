@@ -1,14 +1,14 @@
-import { logoutAccount } from '@/lib/actions/user.actions'
-import Image from 'next/image'
-import { useRouter } from 'next/navigation'
 import React from 'react'
+import Image from 'next/image'
+import { logoutAccount } from '@/lib/actions/user.actions'
+import { useRouter } from 'next/navigation'
+import TwoFactorAuth from './TwoFactorAuth' // Import it
 
 const Footer = ({ user, type = 'desktop' }: FooterProps) => {
   const router = useRouter();
 
   const handleLogOut = async () => {
     const loggedOut = await logoutAccount();
-
     if(loggedOut) router.push('/sign-in')
   }
 
@@ -29,8 +29,13 @@ const Footer = ({ user, type = 'desktop' }: FooterProps) => {
           </p>
       </div>
 
-      <div className="footer_image" onClick={handleLogOut}>
-        <Image src="icons/logout.svg" fill alt="jsm" />
+      {/* REPLACED LOGOUT WITH 2FA FOR NOW OR ADD NEXT TO IT */}
+      <div className="flex items-center gap-2">
+         <TwoFactorAuth user={user} />
+         
+         <div className="footer_image" onClick={handleLogOut}>
+            <Image src="icons/logout.svg" fill alt="jsm" />
+         </div>
       </div>
     </footer>
   )
