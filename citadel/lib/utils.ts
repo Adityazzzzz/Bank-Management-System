@@ -222,3 +222,24 @@ export const generateCardDetails = () => {
     expiryDate: `${Math.floor(Math.random() * 12 + 1).toString().padStart(2, '0')}/${(new Date().getFullYear() + 5).toString().slice(-2)}`
   };
 };
+
+export const countTransactionCategories2 = (transactions: Transaction[]) => {
+  const categoryCounts: { [key: string]: number } = {};
+
+  transactions.forEach((t) => {
+    const category = t.category;
+    // FIX: Force amount to be a number. If it's negative, make it positive (abs)
+    const amount = Math.abs(Number(t.amount)); 
+
+    if (Object.prototype.hasOwnProperty.call(categoryCounts, category)) {
+      categoryCounts[category] += amount;
+    } else {
+      categoryCounts[category] = amount;
+    }
+  });
+
+  const labels = Object.keys(categoryCounts);
+  const data = Object.values(categoryCounts);
+
+  return { datasets: [{ data }], labels };
+};
