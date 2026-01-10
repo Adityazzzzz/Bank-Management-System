@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, IBM_Plex_Serif } from "next/font/google";
 import "./globals.css";
 
@@ -14,7 +14,16 @@ export const metadata: Metadata = {
   description: "Citadel is a modern banking platform for everyone.",
   icons: {
     icon: '/icons/logo.svg'
-  }
+  },
+  manifest: "/manifest.json",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0179FE",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false, // Prevents zooming -> feels like native app
 };
 
 export default function RootLayout({
