@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import ErrorToast from '@/components/ErrorToast';
 import HeaderBox from '@/components/HeaderBox'
 import RecentTransactions from '@/components/RecentTransactions';
