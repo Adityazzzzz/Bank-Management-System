@@ -46,7 +46,7 @@ const MyCards = async () => {
             <div className="flex items-center justify-between">
               <h2 className="header-2">Virtual Cards</h2>
               <form action={handleNewCard}>
-                <Button className="bg-black text-white hover:bg-gray-800 shadow-md rounded-lg h-10 px-4">
+                <Button className="bg-blue-600 text-white hover:bg-blue-700 shadow-md rounded-lg h-10 px-4">
                   + Generate Card
                 </Button>
               </form>
