@@ -1,4 +1,3 @@
-/* eslint-disable no-prototype-builtins */
 import { type ClassValue, clsx } from "clsx";
 import qs from "query-string";
 import { twMerge } from "tailwind-merge";
@@ -136,25 +135,18 @@ export function countTransactionCategories(
   const categoryCounts: { [category: string]: number } = {};
   let totalCount = 0;
 
-  // Iterate over each transaction
   transactions &&
     transactions.forEach((transaction) => {
-      // Extract the category from the transaction
       const category = transaction.category;
-
-      // If the category exists in the categoryCounts object, increment its count
       if (categoryCounts.hasOwnProperty(category)) {
         categoryCounts[category]++;
-      } else {
-        // Otherwise, initialize the count to 1
+      } 
+      else {
         categoryCounts[category] = 1;
       }
-
-      // Increment total count
       totalCount++;
     });
 
-  // Convert the categoryCounts object to an array of objects
   const aggregatedCategories: CategoryCount[] = Object.keys(categoryCounts).map(
     (category) => ({
       name: category,
@@ -163,17 +155,13 @@ export function countTransactionCategories(
     })
   );
 
-  // Sort the aggregatedCategories array by count in descending order
   aggregatedCategories.sort((a, b) => b.count - a.count);
 
   return aggregatedCategories;
 }
 
 export function extractCustomerIdFromUrl(url: string) {
-  // Split the URL string by '/'
   const parts = url.split("/");
-
-  // Extract the last part, which represents the customer ID
   const customerId = parts[parts.length - 1];
 
   return customerId;
@@ -255,7 +243,6 @@ export const calculateGrowth = (transactions: any[]) => {
   const currentMonth = now.getMonth();
   const currentYear = now.getFullYear();
 
-  // Calculate Last Month
   const lastMonthDate = new Date();
   lastMonthDate.setMonth(now.getMonth() - 1);
   const lastMonth = lastMonthDate.getMonth();
@@ -279,7 +266,7 @@ export const calculateGrowth = (transactions: any[]) => {
   if (lastMonthTotal > 0) {
     growth = ((currentMonthTotal - lastMonthTotal) / lastMonthTotal) * 100;
   } else if (currentMonthTotal > 0) {
-    growth = 100; // 100% increase if last month was 0
+    growth = 100;
   }
 
   return { currentMonthTotal, lastMonthTotal, growth };

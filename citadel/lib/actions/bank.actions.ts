@@ -8,17 +8,13 @@ import {
   TransferNetwork,
   TransferType,
 } from "plaid";
-
 import { plaidClient } from "../plaid";
 import { parseStringify } from "../utils";
-
 import { getTransactionsByBankId } from "./transaction.actions";
 import { getBanks, getBank } from "./user.actions";
 
-// Get multiple bank accounts
 export const getAccounts = async ({ userId }: getAccountsProps) => {
   try {
-    // get banks from db
     const banks = await getBanks({ userId });
 
     if (!banks) return null;
@@ -26,13 +22,11 @@ export const getAccounts = async ({ userId }: getAccountsProps) => {
     const accounts = await Promise.all(
       banks.map(async (bank: Bank) => {
         try {
-            // get each account info from plaid
             const accountsResponse = await plaidClient.accountsGet({
             access_token: bank.accessToken,
             });
             const accountData = accountsResponse.data.accounts[0];
 
-            // get institution info from plaid
             const institution = await getInstitution({
             institutionId: accountsResponse.data.item.institution_id!,
             });
@@ -52,14 +46,11 @@ export const getAccounts = async ({ userId }: getAccountsProps) => {
             };
             return account;
         } catch (error) {
-            // FIX: If one bank fails, log it and return null, don't crash the whole app
             console.warn(`Failed to fetch account for bank ${bank.$id}:`, error);
             return null;
         }
       })
     );
-
-    // FIX: Filter out the nulls (failed banks)
     const validAccounts = accounts.filter((account) => account !== null);
 
     if (validAccounts.length === 0) return null;
@@ -72,25 +63,20 @@ export const getAccounts = async ({ userId }: getAccountsProps) => {
     return parseStringify({ data: validAccounts, totalBanks, totalCurrentBalance });
   } catch (error) {
     console.error("An error occurred while getting the accounts:", error);
-    return null; // Ensure we return null so frontend checks work
+    return null; 
   }
 };
 
-// Get one bank account
+
 export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
   try {
-    // get bank from db
     const bank = await getBank({ documentId: appwriteItemId });
-
     if (!bank) return null;
 
-    // get account info from plaid
     const accountsResponse = await plaidClient.accountsGet({
       access_token: bank.accessToken,
     });
     const accountData = accountsResponse.data.accounts[0];
-
-    // get transfer transactions from appwrite
     const transferTransactionsData = await getTransactionsByBankId({
       bankId: bank.$id,
     });
@@ -107,7 +93,6 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
       })
     ) || [];
 
-    // get institution info from plaid
     const institution = await getInstitution({
       institutionId: accountsResponse.data.item.institution_id!,
     });
@@ -129,8 +114,6 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
       appwriteItemId: bank.$id,
       shareableId: bank.shareableId,
     };
-
-    // sort transactions by date such that the most recent transaction is first
     const allTransactions = [...transactions, ...transferTransactions].sort(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     );
@@ -145,7 +128,7 @@ export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
   }
 };
 
-// Get bank info
+
 export const getInstitution = async ({
   institutionId,
 }: getInstitutionProps) => {
@@ -163,7 +146,6 @@ export const getInstitution = async ({
   }
 };
 
-// Get transactions
 export const getTransactions = async ({
   accessToken,
 }: getTransactionsProps) => {
@@ -173,7 +155,6 @@ export const getTransactions = async ({
   if (!accessToken) return [];
 
   try {
-    // Iterate through each page of new transaction updates for item
     while (hasMore) {
       const response = await plaidClient.transactionsSync({
         access_token: accessToken,
@@ -200,8 +181,8 @@ export const getTransactions = async ({
     }
 
     return parseStringify(transactions);
-  } catch (error: any) {
-    // FIX: Handle Plaid Errors Gracefully
+  } 
+  catch (error: any) {
     if (error?.response?.status === 400 || error?.response?.data?.error_code === 'ITEM_LOGIN_REQUIRED') {
         console.warn("Transactions could not be retrieved (likely due to missing permissions or expired token). Returning empty list.");
         return [];

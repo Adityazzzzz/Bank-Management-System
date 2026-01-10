@@ -27,13 +27,9 @@ export const BankDropdown = ({
 
   const handleBankChange = (newId: string) => {
     setSelected(newId);
-    
-    // FIX: If we are in a form (setValue exists), DO NOT change the URL.
-    // This prevents the page from refreshing and resetting the form.
     if (setValue) {
       setValue("senderBank", newId);
     } else {
-      // Only change URL on Dashboard/History pages
       const newUrl = formUrlQuery({
         params: searchParams.toString(),
         key: "id",
