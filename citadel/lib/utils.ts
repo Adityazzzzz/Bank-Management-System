@@ -223,14 +223,20 @@ export const generateCardDetails = () => {
   };
 };
 
-export const countTransactionCategories2 = (transactions: Transaction[]) => {
+export const countTransactionCategories2 = (transactions: any[]) => {
   const categoryCounts: { [key: string]: number } = {};
+  if (!transactions || transactions.length === 0) return { datasets: [{ data: [] }], labels: [] };
 
   transactions.forEach((t) => {
-    const category = t.category;
-    // FIX: Force amount to be a number. If it's negative, make it positive (abs)
-    const amount = Math.abs(Number(t.amount)); 
-
+    const amount = Math.abs(Number(t.amount) || 0);
+    let category = "Other";
+    if (t.category) {
+        if (Array.isArray(t.category)) {
+            category = t.category[0];
+        } else {
+            category = t.category;
+        }
+    }
     if (Object.prototype.hasOwnProperty.call(categoryCounts, category)) {
       categoryCounts[category] += amount;
     } else {
@@ -242,4 +248,39 @@ export const countTransactionCategories2 = (transactions: Transaction[]) => {
   const data = Object.values(categoryCounts);
 
   return { datasets: [{ data }], labels };
+};
+
+export const calculateGrowth = (transactions: any[]) => {
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  // Calculate Last Month
+  const lastMonthDate = new Date();
+  lastMonthDate.setMonth(now.getMonth() - 1);
+  const lastMonth = lastMonthDate.getMonth();
+  const lastMonthYear = lastMonthDate.getFullYear();
+
+  let currentMonthTotal = 0;
+  let lastMonthTotal = 0;
+
+  transactions.forEach((t) => {
+    const tDate = new Date(t.date);
+    const amount = Math.abs(Number(t.amount));
+
+    if (tDate.getMonth() === currentMonth && tDate.getFullYear() === currentYear) {
+      currentMonthTotal += amount;
+    } else if (tDate.getMonth() === lastMonth && tDate.getFullYear() === lastMonthYear) {
+      lastMonthTotal += amount;
+    }
+  });
+
+  let growth = 0;
+  if (lastMonthTotal > 0) {
+    growth = ((currentMonthTotal - lastMonthTotal) / lastMonthTotal) * 100;
+  } else if (currentMonthTotal > 0) {
+    growth = 100; // 100% increase if last month was 0
+  }
+
+  return { currentMonthTotal, lastMonthTotal, growth };
 };

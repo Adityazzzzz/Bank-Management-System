@@ -9,21 +9,21 @@ import { Button } from '@/components/ui/button'
 import { redirect } from 'next/navigation'
 import NewPotForm from '@/components/NewPotForm'
 import { getAccount, getAccounts } from '@/lib/actions/bank.actions';
+import { getManualTransactions } from '@/lib/actions/transaction.actions';
 
 const MyCards = async () => {
   const user = await getLoggedInUser();
   if(!user) redirect('/sign-in');
-
-  // 1. FETCH REAL BANK DATA
-  // We get all accounts linked to this user
   const accountsData = await getAccounts({ userId: user.$id });
-  
-  // 2. GET TRANSACTIONS
-  // We fetch the full details (including transactions) for the first linked account.
-  // If no account is linked, this will simply be null/undefined.
-  const account = await getAccount({ 
-    appwriteItemId: accountsData?.data[0]?.appwriteItemId 
-  });
+  const appwriteItemId = accountsData?.data?.[0]?.appwriteItemId;
+
+  const account = appwriteItemId 
+    ? await getAccount({ appwriteItemId }) 
+    : null;
+
+  const plaidTransactions = account?.transactions || [];
+  const manualTransactions = await getManualTransactions(user.$id);
+  const allTransactions = [...plaidTransactions, ...manualTransactions];
 
   const cards = await getCards({ userId: user.$id });
   const pots = await getPots(user.$id);
@@ -37,39 +37,32 @@ const MyCards = async () => {
     <section className="flex w-full flex-col gap-8 bg-gray-50 p-8 min-h-screen">
       <HeaderBox title="My Cards & Vaults" subtext="Manage your virtual cards and savings goals." />
 
-      {/* 1. ANALYTICS SECTION */}
-      {/* Pass the real transactions here. If account is null, pass empty array [] */}
-      <SpendingChart transactions={account?.transactions || []} />
+      <SpendingChart transactions={allTransactions} userId={user.$id} />
 
-      {/* Divider */}
       <hr className="border-gray-200" />
 
-      {/* 2. MAIN CONTENT GRID */}
       <div className="flex flex-col lg:flex-row gap-8 items-start">
-        
-        {/* LEFT SIDE: VIRTUAL CARDS */}
         <div className="w-full lg:w-[65%] flex flex-col gap-6">
             <div className="flex items-center justify-between">
-                <h2 className="header-2">Virtual Cards</h2>
-                <form action={handleNewCard}>
-                    <Button className="bg-black text-white hover:bg-gray-800 shadow-md rounded-lg h-10 px-4">
-                        + Generate Card
-                    </Button>
-                </form>
+              <h2 className="header-2">Virtual Cards</h2>
+              <form action={handleNewCard}>
+                <Button className="bg-black text-white hover:bg-gray-800 shadow-md rounded-lg h-10 px-4">
+                  + Generate Card
+                </Button>
+              </form>
             </div>
 
             <div className="flex flex-wrap gap-6">
-                {cards.length > 0 ? (
-                    cards.map((card: any) => <VirtualCard key={card.$id} card={card} />)
-                ) : (
-                    <div className="flex w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 bg-white/50 p-12 text-center">
-                        <p className="text-16 font-medium text-gray-500">No cards yet.</p>
-                    </div>
-                )}
+              {cards.length > 0 ? (
+                cards.map((card: any) => <VirtualCard key={card.$id} card={card} />)
+              ) : (
+                <div className="flex w-full flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-gray-300 bg-white/50 p-12 text-center">
+                  <p className="text-16 font-medium text-gray-500">No cards yet.</p>
+                </div>
+              )}
             </div>
         </div>
-
-        {/* RIGHT SIDE: SAVINGS POTS */}
+        
         <div className="w-full lg:w-[35%] flex flex-col gap-6 border-t border-gray-200 pt-8 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8">
             <div className="flex items-center justify-between">
                 <h2 className="header-2">Savings Pots</h2>
@@ -88,7 +81,6 @@ const MyCards = async () => {
                 )}
             </div>
         </div>
-
       </div>
     </section>
   )
