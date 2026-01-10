@@ -50,7 +50,7 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 # APPWRITE
 NEXT_PUBLIC_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
 NEXT_PUBLIC_APPWRITE_PROJECT=your_project_id
-NEXT_APPWRITE_KEY=your_secret_api_key
+APPWRITE_KEY=your_secret_api_key
 NEXT_PUBLIC_APPWRITE_DATABASE_ID=your_database_id
 NEXT_PUBLIC_APPWRITE_USER_COLLECTION_ID=your_user_collection_id
 NEXT_PUBLIC_APPWRITE_BANK_COLLECTION_ID=your_bank_collection_id

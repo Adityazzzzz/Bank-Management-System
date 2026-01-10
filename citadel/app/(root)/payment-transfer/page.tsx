@@ -1,31 +1,34 @@
-import HeaderBox from '@/components/HeaderBox'
-import PaymentTransferForm from '@/components/PaymentTransferForm'
+import HeaderBox from '@/components/HeaderBox';
+import PaymentTransferForm from '@/components/PaymentTransferForm'; // Import the new component
 import { getAccounts } from '@/lib/actions/bank.actions';
 import { getLoggedInUser } from '@/lib/actions/user.actions';
-import React from 'react'
+import { redirect } from 'next/navigation';
 
 const Transfer = async () => {
   const loggedIn = await getLoggedInUser();
-  const accounts = await getAccounts({ 
-    userId: loggedIn.$id 
-  })
+  if(!loggedIn) redirect('/sign-in');
 
-  if(!accounts) return;
-  
+  const accounts = await getAccounts({ userId: loggedIn.$id });
+
+  if(!accounts) return null;
+
   const accountsData = accounts?.data;
 
   return (
-    <section className="payment-transfer">
+    <section className="flex flex-col gap-8 bg-gray-50 p-8 min-h-screen">
       <HeaderBox 
         title="Payment Transfer"
         subtext="Please provide any specific details or notes related to the payment transfer"
       />
 
-      <section className="size-full pt-5">
-        <PaymentTransferForm accounts={accountsData} />
-      </section>
+      <div className="flex flex-col gap-8">
+        <PaymentTransferForm 
+            accounts={accountsData} 
+            userId={loggedIn.$id} 
+        />
+      </div>
     </section>
   )
 }
 
-export default Transfer
+export default Transfer;
