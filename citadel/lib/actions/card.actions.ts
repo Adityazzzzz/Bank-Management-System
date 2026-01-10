@@ -48,3 +48,40 @@ export const getCards = async ({ userId }: { userId: string }) => {
     console.log(error);
   }
 };
+
+export const toggleCardStatus = async ({ cardId, status, path }: { cardId: string; status: string; path: string }) => {
+  try {
+    const { database } = await createAdminClient();
+    
+    const newStatus = status === 'active' ? 'frozen' : 'active';
+
+    const updatedCard = await database.updateDocument(
+      DATABASE_ID!,
+      CARD_COLLECTION_ID!,
+      cardId,
+      { status: newStatus }
+    );
+
+    revalidatePath(path);
+    return parseStringify(updatedCard);
+  } catch (error) {
+    console.error("Error freezing card:", error);
+  }
+};
+
+// NEW: Delete Card
+export const deleteCard = async ({ cardId, path }: { cardId: string; path: string }) => {
+  try {
+    const { database } = await createAdminClient();
+    
+    await database.deleteDocument(
+      DATABASE_ID!,
+      CARD_COLLECTION_ID!,
+      cardId
+    );
+
+    revalidatePath(path);
+  } catch (error) {
+    console.error("Error deleting card:", error);
+  }
+};

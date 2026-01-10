@@ -36,3 +36,9 @@ export const fundPot = async (potId: string, amount: number, currentBalance: num
     revalidatePath('/my-cards'); // FIX
     return parseStringify(updatedPot);
 }
+
+export const deletePot = async (potId: string) => {
+    const { database } = await createAdminClient();
+    await database.deleteDocument(DATABASE_ID!, POT_COLLECTION_ID!, potId);
+    revalidatePath('/my-cards');
+}
