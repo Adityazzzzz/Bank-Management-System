@@ -5,8 +5,8 @@ import { parseStringify } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 
 const {
-  APPWRITE_DATABASE_ID: DATABASE_ID,
-  APPWRITE_POT_COLLECTION_ID: POT_COLLECTION_ID,
+  NEXT_PUBLIC_APPWRITE_DATABASE_ID: DATABASE_ID,
+  NEXT_PUBLIC_APPWRITE_POT_COLLECTION_ID: POT_COLLECTION_ID,
 } = process.env;
 
 export const createPot = async ({ userId, name, targetAmount }: any) => {

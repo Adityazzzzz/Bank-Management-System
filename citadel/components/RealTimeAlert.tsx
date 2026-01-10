@@ -11,7 +11,7 @@ const RealTimeAlert = ({ userId }: { userId: string }) => {
 
     // Subscribe to the 'transactions' channel
     const unsubscribe = client.subscribe(
-      `databases.${process.env.APPWRITE_DATABASE_ID}.collections.${process.env.APPWRITE_TRANSACTION_COLLECTION_ID}.documents`,
+      `databases.${process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID}.collections.${process.env.NEXT_PUBLIC_APPWRITE_TRANSACTION_COLLECTION_ID}.documents`,
       (response) => {
         const payload = response.payload as any;
 

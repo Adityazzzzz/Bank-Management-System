@@ -6,8 +6,8 @@ import { parseStringify, generateCardDetails } from "@/lib/utils";
 import { revalidatePath } from "next/cache"; // IMPORT THIS
 
 const {
-  APPWRITE_DATABASE_ID: DATABASE_ID,
-  APPWRITE_CARD_COLLECTION_ID: CARD_COLLECTION_ID,
+  NEXT_PUBLIC_APPWRITE_DATABASE_ID: DATABASE_ID,
+  NEXT_PUBLIC_APPWRITE_CARD_COLLECTION_ID: CARD_COLLECTION_ID,
 } = process.env;
 
 export const createVirtualCard = async ({ userId, label }: { userId: string; label: string }) => {
