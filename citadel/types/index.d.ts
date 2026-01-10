@@ -39,6 +39,7 @@ declare type User = {
   postalCode: string;
   dateOfBirth: string;
   ssn: string;
+  mfaEnabled: boolean;
 };
 
 declare type NewUserParams = {
