@@ -34,7 +34,7 @@ const MyCards = async () => {
   }
 
   return (
-    <section className="flex w-full flex-col gap-8 bg-gray-50 p-8 min-h-screen">
+    <section className="flex w-full flex-col gap-8 bg-gray-50 p-8 min-h-screen overflow-y-auto">
       <HeaderBox title="My Cards & Vaults" subtext="Manage your virtual cards and savings goals." />
 
       <SpendingChart transactions={allTransactions} userId={user.$id} />
@@ -62,7 +62,7 @@ const MyCards = async () => {
               )}
             </div>
         </div>
-        
+
         <div className="w-full lg:w-[35%] flex flex-col gap-6 border-t border-gray-200 pt-8 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8">
             <div className="flex items-center justify-between">
                 <h2 className="header-2">Savings Pots</h2>

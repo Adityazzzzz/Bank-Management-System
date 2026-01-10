@@ -20,6 +20,7 @@ export const createTransaction = async (transaction: CreateTransactionProps) => 
       {
         channel: 'online',
         category: 'Transfer',
+        date: new Date().toISOString(),
         ...transaction
       }
     )
