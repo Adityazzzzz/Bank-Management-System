@@ -12,8 +12,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Footer from "./Footer";
-import PlaidLink from "./PlaidLink"; // Import this
-import TwoFactorAuth from "./TwoFactorAuth"; // Import this
+import PlaidLink from "./PlaidLink";
+import TwoFactorAuth from "./TwoFactorAuth";
 
 const MobileNav = ({ user }: MobileNavProps) => {
   const pathname = usePathname();
@@ -30,10 +30,10 @@ const MobileNav = ({ user }: MobileNavProps) => {
             className="cursor-pointer"
           />
         </SheetTrigger>
-        <SheetContent side="left" className="border-none bg-white flex flex-col justify-between h-screen">
-            {/* WRAPPER FOR SCROLLING CONTENT */}
+        <SheetContent side="left" className="border-none bg-white flex flex-col justify-between h-screen overflow-hidden">
+            
+            {/* SCROLLABLE LINKS AREA */}
             <div className="flex flex-col h-full overflow-y-auto no-scrollbar">
-                
               <Link href="/" className="cursor-pointer flex items-center gap-1 px-4 mb-4">
                 <Image
                   src="/icons/logo.svg"
@@ -85,13 +85,16 @@ const MobileNav = ({ user }: MobileNavProps) => {
               </div>
           </div>
 
-          <div className="flex flex-col gap-3 border-t border-gray-100 pt-6">
-            <PlaidLink user={user} variant="ghost" />
-            <div className="w-full px-2 max-xl:hidden [&>button]:w-full [&>button]:justify-center [&>button]:shadow-none [&>button]:bg-gray-50 [&>button]:text-gray-700 [&>button]:border-gray-200 [&>button]:hover:bg-gray-100">
-                <TwoFactorAuth user={user} />
+          <div className="flex flex-col gap-4 border-t border-gray-100 pt-6 px-4 pb-4 bg-white">
+            
+            <PlaidLink user={user} variant="primary" />
+            <div className="w-full flex justify-center [&>button]:w-full [&>button]:justify-center [&>button]:bg-gray-100 [&>button]:text-gray-900 [&>button]:shadow-sm hover:[&>button]:bg-gray-200">
+              <TwoFactorAuth user={user} />
             </div>
-            <Footer user={user} type="desktop" />
+
+            <Footer user={user} type="mobile" />
           </div>
+
         </SheetContent>
       </Sheet>
     </section>
