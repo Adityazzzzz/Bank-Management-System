@@ -5,6 +5,7 @@ import BankCard from './BankCard'
 import { countTransactionCategories } from '@/lib/utils'
 import Category from './Category'
 import PlaidLink from './PlaidLink' 
+import { Plus, HelpCircle, MessageCircle } from 'lucide-react' // Import Icon
 
 const RightSidebar = ({ user, transactions, banks }: RightSidebarProps) => {
   const categories: CategoryCount[] = countTransactionCategories(transactions);
@@ -25,6 +26,7 @@ const RightSidebar = ({ user, transactions, banks }: RightSidebarProps) => {
             <p className="profile-email">
               {user.email}
             </p>
+            
           </div>
         </div>
       </section>
@@ -32,7 +34,6 @@ const RightSidebar = ({ user, transactions, banks }: RightSidebarProps) => {
       <section className="banks">
         <div className="flex w-full justify-between items-center">
           <h2 className="header-2">My Banks</h2>
-          
           <PlaidLink user={user} variant="ghost" />
         </div>
 
@@ -61,7 +62,6 @@ const RightSidebar = ({ user, transactions, banks }: RightSidebarProps) => {
 
         <div className="mt-10 flex flex-1 flex-col gap-6">
           <h2 className="header-2">Top categories</h2>
-
           <div className='space-y-5'>
             {categories.map((category, index) => (
               <Category key={category.name} title={category.name} />

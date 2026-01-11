@@ -6,6 +6,8 @@ import RightSidebar from '@/components/RightSidebar';
 import TotalBalanceBox from '@/components/TotalBalanceBox';
 import { getAccount, getAccounts } from '@/lib/actions/bank.actions';
 import { getLoggedInUser } from '@/lib/actions/user.actions';
+import { MessageCircle } from 'lucide-react';
+import Link from 'next/link';
 
 const Home = async (props: SearchParamProps) => {
   const searchParams = await props.searchParams;
@@ -49,12 +51,21 @@ const Home = async (props: SearchParamProps) => {
     <section className="home">
       <div className="home-content">
         <header className="home-header">
-          <HeaderBox
-            type="greeting"
-            title="Welcome"
-            user={loggedIn?.firstName || 'Guest'}
-            subtext="Access and manage your account and transactions efficiently."
-          />
+          <div className='flex justify-around'>
+            <HeaderBox
+              type="greeting"
+              title="Welcome"
+              user={loggedIn?.firstName || 'Guest'}
+              subtext="Access and manage your account and transactions efficiently."
+            />
+            <Link 
+              href="/contact" 
+              className="mt-3 flex items-center gap-2 text-12 font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 w-fit px-3 py-1.5 rounded-full transition-all hover:bg-blue-100"
+            >
+              <MessageCircle size={14} />
+              <span>Contact Founder</span>
+            </Link>
+          </div>
 
           <TotalBalanceBox
             accounts={accountsData}
