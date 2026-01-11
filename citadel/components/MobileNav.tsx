@@ -80,26 +80,17 @@ const MobileNav = ({ user }: MobileNavProps) => {
                         </SheetClose>
                       );
                     })}
-
-                    {/* --- 🌟 NEW: ADDED BUTTONS FOR MOBILE --- */}
-                    <div className="mt-4 flex flex-col gap-4 px-4">
-                        {/* 1. Connect Bank Button */}
-                        <PlaidLink user={user} variant="primary" />
-
-                        {/* 2. 2FA Button */}
-                        <div className="w-full [&>button]:w-full [&>button]:justify-center [&>button]:bg-gray-100 [&>button]:text-gray-900">
-                             <TwoFactorAuth user={user} />
-                        </div>
-                    </div>
-
                   </nav>
                 </SheetClose>
               </div>
           </div>
 
-          {/* FOOTER FIXED AT BOTTOM */}
-          <div className="mt-auto pt-4 border-t border-gray-100">
-             <Footer user={user} type="mobile" />
+          <div className="flex flex-col gap-3 border-t border-gray-100 pt-6">
+            <PlaidLink user={user} variant="ghost" />
+            <div className="w-full px-2 max-xl:hidden [&>button]:w-full [&>button]:justify-center [&>button]:shadow-none [&>button]:bg-gray-50 [&>button]:text-gray-700 [&>button]:border-gray-200 [&>button]:hover:bg-gray-100">
+                <TwoFactorAuth user={user} />
+            </div>
+            <Footer user={user} type="desktop" />
           </div>
         </SheetContent>
       </Sheet>
