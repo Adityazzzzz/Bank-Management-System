@@ -21,7 +21,7 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   themeColor: "#0179FE",
   width: "device-width",
-  initialScale: 1,
+  initialScale: 0.9,
   maximumScale: 1,
   userScalable: false, // Prevents zooming -> feels like native app
 };
@@ -34,11 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${ibmPlexSerif.variable}`}>
-        <div className="flex min-h-screen w-full justify-center bg-gray-50">
-           <div className="w-full max-w-[1600px] shadow-2xl bg-white min-h-screen">
-              {children}
-           </div>
-        </div>
+        {children}
       </body>
     </html>
   );
