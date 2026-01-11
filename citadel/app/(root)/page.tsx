@@ -51,7 +51,7 @@ const Home = async (props: SearchParamProps) => {
     <section className="home">
       <div className="home-content">
         <header className="home-header">
-          <div className='flex justify-around'>
+          <div className="flex w-full items-start justify-between">
             <HeaderBox
               type="greeting"
               title="Welcome"
