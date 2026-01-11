@@ -11,6 +11,7 @@ import { redirect } from 'next/navigation'
 import NewPotForm from '@/components/NewPotForm'
 import { getAccount, getAccounts } from '@/lib/actions/bank.actions';
 import { getManualTransactions } from '@/lib/actions/transaction.actions';
+import InfoTooltip from '@/components/InfoTooltip';
 
 const MyCards = async () => {
   const user = await getLoggedInUser();
@@ -45,7 +46,11 @@ const MyCards = async () => {
       <div className="flex flex-col lg:flex-row gap-8 items-start">
         <div className="w-full lg:w-[65%] flex flex-col gap-6">
             <div className="flex items-center justify-between">
-              <h2 className="header-2">Virtual Cards</h2>
+              <h2 className="header-2 flex gap-2">
+                Virtual Cards
+                <InfoTooltip content="These are secure, digital-only cards for online shopping. You can freeze them instantly to prevent unauthorized transactions." />
+              </h2>
+              
               <form action={handleNewCard}>
                 <Button className="bg-blue-600 text-white hover:bg-blue-700 shadow-md rounded-lg h-10 px-4">
                   + Generate Card
@@ -66,7 +71,10 @@ const MyCards = async () => {
 
         <div className="w-full lg:w-[35%] flex flex-col gap-6 border-t border-gray-200 pt-8 lg:border-t-0 lg:border-l lg:pt-0 lg:pl-8">
             <div className="flex items-center justify-between">
-                <h2 className="header-2">Savings Pots</h2>
+                <h2 className="header-2 flex gap-2">
+                  Savings Pots
+                  <InfoTooltip content="Create dedicated pots for your goals (e.g. 'New Laptop'). Move money here to ring-fence it from your daily spending." />
+                </h2>
                 <NewPotForm userId={user.$id} />
             </div>
 

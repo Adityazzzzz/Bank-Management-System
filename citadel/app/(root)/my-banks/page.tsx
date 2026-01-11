@@ -5,6 +5,7 @@ import { getAccounts } from '@/lib/actions/bank.actions';
 import { getLoggedInUser } from '@/lib/actions/user.actions';
 import React from 'react'
 import ErrorToast from '@/components/ErrorToast';
+import InfoTooltip from '@/components/InfoTooltip';
 
 const MyBanks = async () => {
     const loggedIn = await getLoggedInUser();
@@ -31,6 +32,9 @@ const MyBanks = async () => {
                     title="My Bank Accounts"
                     subtext="Effortlessly manage your banking activites."
                 />
+                <div className="mt-4">
+                    <InfoTooltip content="This is a collection of all your linked banks. To receive money, click the copy icon on a card and paste that ID into the 'Receiver ID' field on the Transfer page." />
+                </div>
                 <div className="space-y-4">
                     <h2 className="header-2">
                         Your cards

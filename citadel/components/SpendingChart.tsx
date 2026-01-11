@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import InfoTooltip from "./InfoTooltip";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -71,7 +72,10 @@ const SpendingChart = ({ transactions, userId }: { transactions: any[], userId: 
     <div className="flex w-full flex-col gap-8 lg:flex-row items-center justify-between rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
       <div className="flex flex-col gap-4 min-w-[200px]">
         <div className="flex items-center justify-between">
-            <h2 className="header-2">Monthly Analytics</h2>
+            <h2 className="header-2 flex gap-2">
+              Monthly Analytics
+              <InfoTooltip content="This chart visualizes your spending habits. Use it to track which categories (Food, Travel, etc.) are consuming most of your budget." />
+            </h2>
         </div>
         <div className="w-full">
             <Select value={selectedMonth} onValueChange={setSelectedMonth}>

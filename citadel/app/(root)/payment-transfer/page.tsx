@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'; // Import Button
 import { ArrowRightLeft, Zap } from 'lucide-react'; // Import Icons
 import Link from 'next/link'; // Import Link
 import { redirect } from 'next/navigation';
+import InfoTooltip from '@/components/InfoTooltip';
 
 const Transfer = async () => {
   const loggedIn = await getLoggedInUser();
@@ -34,7 +35,10 @@ const Transfer = async () => {
                     <Zap size={20} />
                 </div>
                 <div>
-                    <h2 className="text-16 font-bold text-gray-900">Need to send money instantly?</h2>
+                    <h2 className="text-16 font-bold text-gray-900 flex gap-2">
+                      Need to send money instantly?
+                      <InfoTooltip content="P2P Transfer moves money instantly between Citadel users. It requires the recipient's email address and is free of charge." />
+                    </h2>
                     <p className="text-14 text-gray-600">Use Citadel P2P to send funds directly to other users in seconds.</p>
                 </div>
             </div>

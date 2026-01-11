@@ -26,6 +26,7 @@ import {
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { toast } from "sonner";
+import InfoTooltip from "./InfoTooltip";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -158,8 +159,9 @@ const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
         />
 
         <div className="payment-transfer_form-details">
-          <h2 className="text-18 font-semibold text-gray-900">
+          <h2 className="text-18 font-semibold text-gray-900 flex gap-2">
             Bank account details
+            <InfoTooltip content="This uses the US Banking System (ACH/Dwolla) to move real money. You need the recipient's Account ID (Shareable ID) from their 'My Banks' page. Takes 1-3 business days." />
           </h2>
           <p className="text-16 font-normal text-gray-600">
             Enter the bank account details of the recipient

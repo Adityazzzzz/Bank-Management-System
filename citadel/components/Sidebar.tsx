@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import Footer from './Footer'
 import TwoFactorAuth from './TwoFactorAuth'
+import PlaidLink from './PlaidLink';
 
 const Sidebar = ({ user }: SiderbarProps) => {
   const pathname = usePathname();
@@ -62,17 +63,13 @@ const Sidebar = ({ user }: SiderbarProps) => {
             })}
         </div>
       </nav>
-
-      {/* NEW: UNIFIED USER CONTROL CENTER */}
-      {/* This groups the Footer and 2FA into one clean "Account Box" at the bottom */}
       <div className="flex flex-col gap-3 border-t border-gray-100 pt-6">
-        
-        {/* 2FA Button (Full Width) */}
+          <PlaidLink user={user} variant="ghost" />
+
         <div className="w-full px-2 max-xl:hidden [&>button]:w-full [&>button]:justify-center [&>button]:shadow-none [&>button]:bg-gray-50 [&>button]:text-gray-700 [&>button]:border-gray-200 [&>button]:hover:bg-gray-100">
             <TwoFactorAuth user={user} />
         </div>
 
-        {/* Profile Info */}
         <Footer user={user} type="desktop" />
       </div>
     </section>
