@@ -34,7 +34,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${ibmPlexSerif.variable}`}>
-        {children}
+        <div className="flex min-h-screen w-full justify-center bg-gray-50">
+           <div className="w-full max-w-[1600px] shadow-2xl bg-white min-h-screen">
+              {children}
+           </div>
+        </div>
       </body>
     </html>
   );

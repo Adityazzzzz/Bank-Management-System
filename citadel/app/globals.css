@@ -74,7 +74,6 @@
   }
   * { @apply border-border; }
   body { 
-    zoom: 0.9;
     @apply bg-background text-foreground; 
   }
 }
