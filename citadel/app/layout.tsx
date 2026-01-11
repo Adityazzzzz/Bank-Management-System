@@ -19,11 +19,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0179FE",
   width: "device-width",
-  initialScale: 0.9,
-  maximumScale: 1,
-  userScalable: false, // Prevents zooming -> feels like native app
+  initialScale: 1,
 };
 
 export default function RootLayout({
