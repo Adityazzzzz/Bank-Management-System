@@ -33,11 +33,11 @@ const MyBanks = async () => {
                     subtext="Effortlessly manage your banking activites."
                 />
                 <div className="mt-4">
-                    <InfoTooltip content="This is a collection of all your linked banks. To receive money, click the copy icon on a card and paste that ID into the 'Receiver ID' field on the Transfer page." />
                 </div>
                 <div className="space-y-4">
-                    <h2 className="header-2">
+                    <h2 className="header-2 flex gap-2">
                         Your cards
+                        <InfoTooltip content="This is a collection of all your linked banks. To receive money, click the copy icon on a card and paste that ID into the 'Receiver ID' field on the Transfer page." />
                     </h2>
                     <div className="flex flex-wrap gap-6">
                         {accounts && accounts.data.map((a: Account) => (
